@@ -14,7 +14,15 @@ public class ArduinoHandler : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-        p.GetComponent<Player>();
+        if(p == null)
+        {
+            Debug.Log("Please select the ArduinoHandler and dragNdrop the player into the P in the inspector.");
+        }
+        else
+        {
+            p.GetComponent<Player>();
+        }
+        
         if (useArduino)
         {
             arduino = Arduino.global;
