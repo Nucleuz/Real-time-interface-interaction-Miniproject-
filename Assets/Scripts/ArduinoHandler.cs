@@ -10,12 +10,16 @@ public class ArduinoHandler : MonoBehaviour {
     public int pin = 2;
     public int pinValue;
     public int testLed = 13;
+    public bool useArduino = false;
 
 	// Use this for initialization
 	void Start () {
         p.GetComponent<Player>();
-        arduino = Arduino.global;
-        arduino.Setup(ConfigurePins);
+        if (useArduino)
+        {
+            arduino = Arduino.global;
+            arduino.Setup(ConfigurePins);
+        }
 	}
 	
 	
@@ -28,13 +32,17 @@ public class ArduinoHandler : MonoBehaviour {
 
     void Update()
     {
-        // read the value from the digital input
-        pinValue = arduino.digitalRead(pin);
-        // apply that value to the test LED
-        arduino.digitalWrite(testLed, pinValue);
-        if(pinValue == 1)
+        if (useArduino)
         {
-            p.Jump();
+            // read the value from the digital input
+            pinValue = arduino.digitalRead(pin);
+            // apply that value to the test LED
+            arduino.digitalWrite(testLed, pinValue);
+            if (pinValue == 1)
+            {
+                p.Jump();
+            }
         }
+        
     }
 }
