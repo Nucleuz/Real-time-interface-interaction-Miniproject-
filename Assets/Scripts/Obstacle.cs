@@ -4,6 +4,7 @@ using System.Collections;
 public class Obstacle : MonoBehaviour
 {
     public Player player;
+    public bool hitAnObject = false;
 
     public Vector2 velocity = new Vector2(-4, 0);
 	public float range;
@@ -24,10 +25,7 @@ public class Obstacle : MonoBehaviour
 		}
     }
 
-	void OnCollisionEnter2D (Collision2D other){
-		if (other.gameObject.CompareTag ("Player")) {
-            player.DecreaseHealthPoints();
-			Destroy (this.gameObject);
-		}
-	}
+	
+
+    
 }

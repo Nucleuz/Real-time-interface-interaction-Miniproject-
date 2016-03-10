@@ -7,10 +7,20 @@ public class ArduinoHandler : MonoBehaviour {
     public Player p;
     Arduino arduino;
 
-    public int pin = 2;
-    public int pinValue;
+    public int pinShoot = 2;
+    public int pinShootValue;
+
+    public int pinBuzzer = 3;
+
+    public int pinDistanceSensor = 4;
+    public float distanceSensorValue;
+
     public int testLed = 13;
+    
     public bool useArduino = false;
+
+    public Obstacle obstacle;
+
 
 	// Use this for initialization
 	void Start () {
@@ -32,10 +42,12 @@ public class ArduinoHandler : MonoBehaviour {
 	
 	
 	void ConfigurePins () {
-        arduino.pinMode(pin, PinMode.INPUT);
-        arduino.reportDigital((byte)(pin / 8), 1);
+        arduino.pinMode(pinShoot, PinMode.INPUT);
+        arduino.reportDigital((byte)(pinShoot / 8), 1);
         // set the pin mode for the test LED on your board, pin 13 on an Arduino Uno
         arduino.pinMode(testLed, PinMode.OUTPUT);
+        arduino.pinMode(pinDistanceSensor, PinMode.ANALOG);
+        arduino.reportAnalog(pinDistanceSensor, 1);
     }
 
     void Update()
@@ -43,13 +55,28 @@ public class ArduinoHandler : MonoBehaviour {
         if (useArduino)
         {
             // read the value from the digital input
-            pinValue = arduino.digitalRead(pin);
+            pinShootValue = arduino.digitalRead(pinShoot);
+            
             // apply that value to the test LED
-            arduino.digitalWrite(testLed, pinValue);
-            if (pinValue == 1)
+            arduino.digitalWrite(testLed, pinShootValue);
+            if (pinShootValue == 1)
             {
-                p.Jump();
+                p.Shoot();
             }
+
+            if (p.hitByObject)
+            {
+                arduino.digitalWrite(pinBuzzer, Arduino.HIGH);
+            }
+            else
+            {
+                arduino.digitalWrite(pinBuzzer, Arduino.LOW);
+            }
+
+            
+            distanceSensorValue = arduino.analogRead(pinDistanceSensor);
+            p.SetVerticalPos(distanceSensorValue);
+            Debug.Log(distanceSensorValue);
         }
         
     }

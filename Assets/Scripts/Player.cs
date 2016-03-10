@@ -7,14 +7,22 @@ public class Player : MonoBehaviour
 	public float moveSpeed = 25f;
     public Vector2 jumpForce = new Vector2(0, 200);
 	private Rigidbody2D rb2d;
+    public float vPos;
+
+    public bool hitByObject = false;
 
     public GameObject projectile;
 
     public int healthPoints = 5;
 
+    public float buzzerTimer;
+
+    private float x;
+
     // Use this for initialization
     void Start()
     {
+        buzzerTimer = 0.1f;
 		rb2d = GetComponent<Rigidbody2D> ();
         
     }
@@ -28,10 +36,9 @@ public class Player : MonoBehaviour
         // Move the player by calculating with moveSpeed
 		rb2d.velocity = new Vector2 (h * moveSpeed, v * moveSpeed);
 
-        // Shoot if key is pressed
-        if (Input.GetKeyDown("space"))
+        if (hitByObject)
         {
-            Shoot();
+            Buzz();
         }
     }
 
@@ -52,6 +59,41 @@ public class Player : MonoBehaviour
     {
         healthPoints--;
         return healthPoints;
+    }
+
+    void Buzz()
+    {
+        buzzerTimer -= Time.deltaTime;
+        Debug.Log(buzzerTimer);
+
+        if(buzzerTimer <= 0)
+        {
+            hitByObject = false;
+            buzzerTimer = 0.1f;
+        }
+    }
+
+    public void SetVerticalPos(float input)
+    { 
+        vPos = (input / 113.7f) * -1;
+        transform.position = new Vector2(0, vPos);
+    }
+
+    public float GetVerticalPos()
+    {
+        return vPos;
+    }
+
+
+    void OnCollisionEnter2D(Collision2D other)
+    {
+        if (other.gameObject.CompareTag("obstacle"))
+        {
+            DecreaseHealthPoints();
+            hitByObject = true;
+            Buzz();
+            Destroy(other.gameObject);
+        }
     }
 
     //void OnCollisionEnter2D(Collision2D other)
