@@ -30,6 +30,7 @@ public class Player : MonoBehaviour
     // Update is called once per frame
     void FixedUpdate()
     {
+        // Declare and initialize h and v as the two axis
 		float h = Input.GetAxis ("Horizontal");
 		float v = Input.GetAxis ("Vertical");
 
@@ -48,12 +49,7 @@ public class Player : MonoBehaviour
         rb2d.AddForce(jumpForce);
     }
 
-    public void Shoot()
-    {
-        GameObject g = (GameObject)Instantiate(projectile, new Vector3(transform.position.x, transform.position.y, transform.position.z), Quaternion.identity);
-        
-        g.transform.parent = GameObject.Find("ProjectileContainer").transform;
-    }
+
 
     public int DecreaseHealthPoints()
     {
@@ -61,11 +57,13 @@ public class Player : MonoBehaviour
         return healthPoints;
     }
 
+    // Makes the buzzer BUZZ!.
     void Buzz()
     {
         buzzerTimer -= Time.deltaTime;
         Debug.Log(buzzerTimer);
 
+        // Make sure that we only buzz for a limited time and reset buzzer.
         if(buzzerTimer <= 0)
         {
             hitByObject = false;
@@ -73,10 +71,24 @@ public class Player : MonoBehaviour
         }
     }
 
+    // Set vertical position of the player
     public void SetVerticalPos(float input)
     { 
+        // The potentiomenter goes from 0 to 1023, so dividing with approx. 113 is necessary
+        // to keep the player inside the camera's viewpoint.
         vPos = (input / 113.7f) * -1;
         transform.position = new Vector2(0, vPos);
+    }
+
+    // Makes the player shoot.
+    public void Shoot()
+    {
+        GameObject g = (GameObject)Instantiate(projectile, new Vector3(transform.position.x, 
+                                                                       transform.position.y, 
+                                                                       transform.position.z), 
+                                                                       Quaternion.identity);
+
+        g.transform.parent = GameObject.Find("ProjectileContainer").transform;
     }
 
     public float GetVerticalPos()
